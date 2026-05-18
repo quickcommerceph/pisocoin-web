@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import {
+  ArrowLeftRight,
   ArrowRight,
   BadgeCheck,
   Banknote,
@@ -124,6 +125,72 @@ const PAYMENT_RAILS = [
   "Stablecoin",
 ];
 
+const MERCHANT_LOGIN_URL = "https://backoffice.pisocoingateway.com/sessions/signinmerchant";
+const DEFAULT_SOURCE_CURRENCY = "PHP";
+const DEFAULT_TARGET_CURRENCY = "USDT";
+const API_BASE_CURRENCY = "USD";
+const USD_TO_VND = 26309;
+const FRANKFURTER_SYMBOLS = ["PHP", "INR", "IDR", "THB", "MYR", "MXN", "KRW"] as const;
+
+const CONVERTER_CURRENCIES = [
+  { code: "PHP", label: "Philippine Peso", decimals: 2 },
+  { code: "INR", label: "Indian Rupee", decimals: 2 },
+  { code: "IDR", label: "Indonesian Rupiah", decimals: 0 },
+  { code: "VND", label: "Vietnamese Dong", decimals: 0 },
+  { code: "THB", label: "Thai Baht", decimals: 2 },
+  { code: "MYR", label: "Malaysian Ringgit", decimals: 2 },
+  { code: "MXN", label: "Mexican Peso", decimals: 2 },
+  { code: "KRW", label: "South Korean Won", decimals: 0 },
+  { code: "USDT", label: "Tether USD", decimals: 2 },
+] as const;
+
+type FrankfurterSymbol = (typeof FRANKFURTER_SYMBOLS)[number];
+type ConverterCurrency = (typeof CONVERTER_CURRENCIES)[number]["code"];
+type FrankfurterRates = Partial<Record<FrankfurterSymbol, number>>;
+
+function parseAmount(value: string) {
+  const parsed = Number.parseFloat(value.replace(/,/g, ""));
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : 0;
+}
+
+function formatNumber(value: number, decimals: number) {
+  return new Intl.NumberFormat("en-US", {
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: decimals,
+  }).format(value);
+}
+
+function getUsdRate(currency: ConverterCurrency, rates: FrankfurterRates | null) {
+  if (currency === "USDT") {
+    return 1;
+  }
+
+  if (currency === "VND") {
+    return USD_TO_VND;
+  }
+
+  return rates?.[currency] ?? null;
+}
+
+function getConversionRate(
+  sourceCurrency: ConverterCurrency,
+  targetCurrency: ConverterCurrency,
+  rates: FrankfurterRates | null,
+) {
+  if (sourceCurrency === targetCurrency) {
+    return 1;
+  }
+
+  if (!rates) {
+    return null;
+  }
+
+  const sourceUsdRate = getUsdRate(sourceCurrency, rates);
+  const targetUsdRate = getUsdRate(targetCurrency, rates);
+
+  return sourceUsdRate && targetUsdRate ? targetUsdRate / sourceUsdRate : null;
+}
+
 function SectionLabel({
   eyebrow,
   title,
@@ -153,6 +220,74 @@ function SectionLabel({
 }
 
 function HeroMockup() {
+  const [amount, setAmount] = useState("1000");
+  const [sourceCurrency, setSourceCurrency] = useState<ConverterCurrency>(DEFAULT_SOURCE_CURRENCY);
+  const [targetCurrency, setTargetCurrency] = useState<ConverterCurrency>(DEFAULT_TARGET_CURRENCY);
+  const [rates, setRates] = useState<FrankfurterRates | null>(null);
+  const [rateDate, setRateDate] = useState("");
+  const [rateError, setRateError] = useState(false);
+  const [loadingRates, setLoadingRates] = useState(true);
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    async function fetchRates() {
+      try {
+        setLoadingRates(true);
+        setRateError(false);
+
+        const response = await fetch(
+          `https://api.frankfurter.dev/v1/latest?base=${API_BASE_CURRENCY}&symbols=${FRANKFURTER_SYMBOLS.join(",")}`,
+          { signal: controller.signal },
+        );
+
+        if (!response.ok) {
+          throw new Error("Unable to fetch exchange rates");
+        }
+
+        const data = (await response.json()) as {
+          date?: string;
+          rates?: FrankfurterRates;
+        };
+
+        setRates(data.rates ?? null);
+        setRateDate(data.date ?? "");
+      } catch (error) {
+        if (error instanceof DOMException && error.name === "AbortError") {
+          return;
+        }
+
+        setRateError(true);
+        setRates(null);
+        setRateDate("");
+      } finally {
+        if (!controller.signal.aborted) {
+          setLoadingRates(false);
+        }
+      }
+    }
+
+    fetchRates();
+
+    return () => {
+      controller.abort();
+    };
+  }, []);
+
+  const selectedTargetCurrency =
+    CONVERTER_CURRENCIES.find((currency) => currency.code === targetCurrency) ?? CONVERTER_CURRENCIES[0];
+  const numericAmount = parseAmount(amount);
+  const conversionRate = useMemo(
+    () => getConversionRate(sourceCurrency, targetCurrency, rates),
+    [sourceCurrency, targetCurrency, rates],
+  );
+  const convertedAmount = conversionRate ? numericAmount * conversionRate : null;
+  const rateStatus = loadingRates ? "Loading rates" : rateError || !conversionRate ? "Rate unavailable" : rateDate ? `Rates from ${rateDate}` : "Live market rate";
+  const swapCurrencies = () => {
+    setSourceCurrency(targetCurrency);
+    setTargetCurrency(sourceCurrency);
+  };
+
   return (
     <div className="relative mx-auto w-full max-w-[460px] reveal reveal-delay-2">
       <div className="absolute -inset-8 rounded-[2rem] bg-gradient-to-br from-pisocoin-ember/20 via-pisocoin-amber/10 to-transparent blur-2xl" />
@@ -163,37 +298,96 @@ function HeroMockup() {
           <span>Live quote</span>
         </div>
         <div className="mt-5 grid gap-4 rounded-[1.5rem] bg-[#f8f8ff] p-4 text-pisocoin-ink shadow-inner">
-          <div className="flex items-center justify-between rounded-2xl bg-white p-4 shadow-[0_6px_18px_rgba(9,19,107,0.08)]">
-            <div>
-              <p className="text-[11px] uppercase tracking-[0.24em] text-pisocoin-royal">Amount to send</p>
-              <p className="mt-2 font-display text-4xl font-semibold text-pisocoin-ink">1000</p>
-            </div>
-            <div className="rounded-2xl bg-pisocoin-ink px-3 py-2 text-right text-white">
-              <p className="text-[11px] uppercase tracking-[0.2em] text-white/55">₱isoCoin</p>
-              <p className="font-semibold text-lg">Remit</p>
-            </div>
+          <div className="grid gap-4 rounded-2xl bg-white p-4 shadow-[0_6px_18px_rgba(9,19,107,0.08)]">
+            <label className="grid gap-2">
+              <span className="text-[11px] uppercase tracking-[0.24em] text-pisocoin-royal">Amount to send</span>
+              <input
+                type="text"
+                inputMode="decimal"
+                value={amount}
+                onChange={(event) => setAmount(event.target.value)}
+                className="w-full rounded-2xl border border-pisocoin-royal/10 bg-pisocoin-paper/45 px-4 py-3 font-display text-4xl font-semibold text-pisocoin-ink outline-none transition-colors placeholder:text-pisocoin-ink/25 focus:border-pisocoin-royal/35"
+                placeholder="0"
+                aria-label={`Amount to send in ${sourceCurrency}`}
+              />
+            </label>
+            <label className="grid gap-2 text-sm">
+              <span className="text-pisocoin-ink/55">From currency</span>
+              <select
+                value={sourceCurrency}
+                onChange={(event) => setSourceCurrency(event.target.value as ConverterCurrency)}
+                className="w-full rounded-2xl border border-pisocoin-royal/10 bg-pisocoin-ink px-4 py-3 font-semibold text-white outline-none transition-colors focus:border-pisocoin-royal/35"
+                aria-label="Source currency"
+              >
+                {CONVERTER_CURRENCIES.map((currency) => (
+                  <option key={currency.code} value={currency.code}>
+                    {currency.code} - {currency.label}
+                  </option>
+                ))}
+              </select>
+            </label>
           </div>
 
           <div className="grid gap-3 rounded-2xl border border-pisocoin-royal/10 bg-gradient-to-b from-white to-pisocoin-paper p-4">
-            <div className="flex items-center justify-between text-sm">
+            <button
+              type="button"
+              onClick={swapCurrencies}
+              className="mx-auto inline-flex h-10 w-10 items-center justify-center rounded-full border border-pisocoin-royal/10 bg-white text-pisocoin-royal shadow-[0_6px_14px_rgba(9,19,107,0.08)] transition-transform duration-300 hover:-translate-y-0.5"
+              aria-label="Swap source and recipient currencies"
+            >
+              <ArrowLeftRight className="h-4 w-4" />
+            </button>
+            <label className="grid gap-2 text-sm">
+              <span className="text-pisocoin-ink/55">Recipient currency</span>
+              <select
+                value={targetCurrency}
+                onChange={(event) => setTargetCurrency(event.target.value as ConverterCurrency)}
+                className="w-full rounded-2xl border border-pisocoin-royal/10 bg-white px-4 py-3 font-semibold text-pisocoin-ink outline-none transition-colors focus:border-pisocoin-royal/35"
+                aria-label="Recipient currency"
+              >
+                {CONVERTER_CURRENCIES.map((currency) => (
+                  <option key={currency.code} value={currency.code}>
+                    {currency.code} - {currency.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <div className="flex items-center justify-between gap-4 text-sm">
               <span className="text-pisocoin-ink/55">Recipient receives</span>
-              <span className="font-semibold text-pisocoin-ink">4071.20</span>
+              <span className="text-right font-semibold text-pisocoin-ink">
+                {convertedAmount === null
+                  ? "..."
+                  : `${formatNumber(convertedAmount, selectedTargetCurrency.decimals)} ${targetCurrency}`}
+              </span>
             </div>
-            <div className="flex items-center justify-between text-sm">
+            <div className="flex items-center justify-between gap-4 text-sm">
               <span className="text-pisocoin-ink/55">Rate</span>
-              <span className="font-semibold text-pisocoin-ink">1 USD = 56.80 PHP</span>
+              <span className="text-right font-semibold text-pisocoin-ink">
+                {conversionRate === null
+                  ? "Unavailable"
+                  : `1 ${sourceCurrency} = ${formatNumber(
+                      conversionRate,
+                      selectedTargetCurrency.decimals === 0 ? 4 : 6,
+                    )} ${targetCurrency}`}
+              </span>
             </div>
             <div className="h-px bg-pisocoin-royal/10" />
             <div className="flex items-center gap-2 text-sm text-pisocoin-ink/70">
               <BadgeCheck className="h-4 w-4 text-pisocoin-ember" />
-              Instant quote locked for the next 30 seconds
+              {rateStatus}
             </div>
           </div>
 
-          <button className="shine inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-pisocoin-ember to-pisocoin-royal px-5 py-4 text-sm font-semibold text-white shadow-[0_18px_40px_rgba(255,91,87,0.25)] transition-transform duration-300 hover:-translate-y-0.5">
+          <a
+            href={MERCHANT_LOGIN_URL}
+            target="_blank"
+            rel="noreferrer"
+            className="shine inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-pisocoin-ember to-pisocoin-royal px-5 py-4 text-sm font-semibold text-white shadow-[0_18px_40px_rgba(255,91,87,0.25)] transition-transform duration-300 hover:-translate-y-0.5"
+          >
             Send Money
             <Send className="h-4 w-4" />
-          </button>
+          </a>
         </div>
 
         <div className="mt-5 grid grid-cols-3 gap-3 text-white">
@@ -218,8 +412,6 @@ export default function PisoCoinLanding() {
 
   return (
     <main id="top" className="relative overflow-hidden">
-      <div className="noise" />
-
       <header className="sticky top-0 z-50 border-b border-white/8 bg-[#05081f]/70 backdrop-blur-xl">
         <div className="mx-auto flex max-w-[1360px] items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
           <Link href="#top" className="group inline-flex items-center gap-3">
@@ -252,7 +444,7 @@ export default function PisoCoinLanding() {
 
           <div className="hidden items-center gap-3 lg:flex">
             <a
-              href="https://backoffice.pisocoingateway.com/sessions/signinmerchant"
+              href={MERCHANT_LOGIN_URL}
               target="_blank"
               rel="noreferrer"
               className="rounded-full border border-white/12 px-4 py-2 text-sm font-medium text-white/80 transition-colors hover:border-white/25 hover:bg-white/5 hover:text-white"
