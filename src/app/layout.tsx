@@ -3,9 +3,9 @@ import type { ReactNode } from "react";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "PisoCoin Remit",
+  title: "₱isoCoin Remit",
   description:
-    "PisoCoin Remit is a borderless payment and remittance landing page for Filipino merchants, crypto-savvy customers, and global transfers.",
+    "₱isoCoin Remit is a borderless payment and remittance landing page for Filipino merchants, crypto-savvy customers, and global transfers.",
 };
 
 export default function RootLayout({
