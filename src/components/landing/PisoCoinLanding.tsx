@@ -16,7 +16,7 @@ import {
   Clock3,
   Coins,
   Globe,
-  Headphones,
+
   LockKeyhole,
   Menu,
   Rocket,
@@ -39,7 +39,7 @@ const NAV_LINKS = [
   { label: "Why ₱isoCoin?", href: "#why" },
   { label: "Features", href: "#features" },
   { label: "API Docs", href: "https://apidoc.pisocoingateway.com/", external: true },
-  { label: "Contact", href: "#contact" },
+  { label: "Contact", href: "https://wkf.ms/49M7r7F", external: true },
 ];
 
 const BENEFITS = [
@@ -820,7 +820,9 @@ export default function PisoCoinLanding() {
               Login
             </a>
             <a
-              href="#contact"
+              href="https://wkf.ms/49M7r7F"
+              target="_blank"
+              rel="noopener noreferrer"
               className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-pisocoin-ember to-pisocoin-royal px-4 py-2 text-sm font-semibold text-white shadow-[0_16px_30px_rgba(255,91,87,0.2)]"
             >
               Sign Up
@@ -852,7 +854,12 @@ export default function PisoCoinLanding() {
                 {link.label}
               </a>
             ))}
-            <a href="#contact" className="rounded-2xl bg-pisocoin-ember px-4 py-3 text-center text-sm font-semibold text-white">
+            <a
+              href="https://wkf.ms/49M7r7F"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-2xl bg-pisocoin-ember px-4 py-3 text-center text-sm font-semibold text-white"
+            >
               Start the App
             </a>
           </div>
@@ -882,7 +889,9 @@ export default function PisoCoinLanding() {
 
             <div className="reveal reveal-delay-4 mt-9 flex flex-wrap gap-4">
               <a
-                href="#contact"
+                href="https://wkf.ms/49M7r7F"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="shine inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-pisocoin-amber via-[#ff9f4a] to-pisocoin-ember px-6 py-3.5 text-sm font-semibold text-pisocoin-ink shadow-[0_18px_45px_rgba(240,194,75,0.2)]"
               >
                 Start a Transfer
@@ -983,7 +992,9 @@ export default function PisoCoinLanding() {
               ))}
             </div>
             <a
-              href="#contact"
+              href="https://wkf.ms/49M7r7F"
+              target="_blank"
+              rel="noopener noreferrer"
               className="reveal reveal-delay-3 mt-8 inline-flex items-center gap-2 rounded-full border border-pisocoin-amber/35 bg-pisocoin-amber/10 px-5 py-3 text-sm font-semibold text-pisocoin-amber transition-colors hover:bg-pisocoin-amber/20"
             >
               Get Started
@@ -1130,7 +1141,12 @@ export default function PisoCoinLanding() {
                   familiarity, and merchant-grade payouts into one coherent platform.
                 </p>
                 <div className="reveal reveal-delay-3 mt-8 flex flex-wrap gap-4">
-                  <a href="#contact" className="inline-flex items-center gap-2 rounded-full bg-pisocoin-amber px-5 py-3 text-sm font-semibold text-pisocoin-ink">
+                  <a
+                    href="https://wkf.ms/49M7r7F"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 rounded-full bg-pisocoin-amber px-5 py-3 text-sm font-semibold text-pisocoin-ink"
+                  >
                     Contact Sales
                     <ArrowRight className="h-4 w-4" />
                   </a>
@@ -1185,7 +1201,12 @@ export default function PisoCoinLanding() {
                 ))}
               </div>
               <div className="mt-8 flex flex-wrap gap-3">
-                <a href="#contact" className="rounded-full bg-pisocoin-ember px-5 py-3 text-sm font-semibold text-white">
+                <a
+                  href="https://wkf.ms/49M7r7F"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="rounded-full bg-pisocoin-ember px-5 py-3 text-sm font-semibold text-white"
+                >
                   Contact Sales
                 </a>
                 <a
@@ -1224,83 +1245,24 @@ export default function PisoCoinLanding() {
       </section>
 
       <section id="contact" className="section-shell px-4 py-24 sm:px-6 lg:px-8 lg:py-28">
-        <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[0.9fr_1.1fr]">
-          <div className="reveal">
-            <div className="glass rounded-[2rem] p-7">
-              <p className="text-xs uppercase tracking-[0.28em] text-pisocoin-amber">Contact us</p>
-              <h3 className="font-display mt-4 text-4xl font-semibold leading-[1] text-white">
-                Build the next remittance flow with ₱isoCoin.
-              </h3>
-              <p className="mt-5 text-sm leading-7 text-white/70">
-                Reach out for merchant onboarding, integration help, or platform demos.
-              </p>
-
-              <div className="mt-8 space-y-4 text-sm text-white/75">
-                <div className="flex items-center gap-3">
-                  <ShieldCheck className="h-4 w-4 text-pisocoin-amber" />
-                  Merchant onboarding support
-                </div>
-                <div className="flex items-center gap-3">
-                  <Headphones className="h-4 w-4 text-pisocoin-amber" />
-                  24/7 support and walkthroughs
-                </div>
-                <div className="flex items-center gap-3">
-                  <Globe className="h-4 w-4 text-pisocoin-amber" />
-                  Global payment gateway guidance
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="reveal reveal-delay-2 glass rounded-[2rem] p-7 sm:p-8">
-          <form
-            className="grid gap-5"
-            onSubmit={(event) => {
-              event.preventDefault();
-            }}
-          >
-              <div className="grid gap-5 sm:grid-cols-2">
-                <label className="grid gap-2 text-sm text-white/75">
-                  Name
-                  <input
-                    type="text"
-                    placeholder="Your name"
-                    className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none transition-colors placeholder:text-white/30 focus:border-pisocoin-amber/50"
-                  />
-                </label>
-                <label className="grid gap-2 text-sm text-white/75">
-                  Email
-                  <input
-                    type="email"
-                    placeholder="you@company.com"
-                    className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none transition-colors placeholder:text-white/30 focus:border-pisocoin-amber/50"
-                  />
-                </label>
-              </div>
-              <label className="grid gap-2 text-sm text-white/75">
-                Company
-                <input
-                  type="text"
-                  placeholder="Business or project name"
-                  className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none transition-colors placeholder:text-white/30 focus:border-pisocoin-amber/50"
-                />
-              </label>
-              <label className="grid gap-2 text-sm text-white/75">
-                Message
-                <textarea
-                  rows={6}
-                  placeholder="Tell us what you want to launch."
-                  className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none transition-colors placeholder:text-white/30 focus:border-pisocoin-amber/50"
-                />
-              </label>
-              <button
-                type="submit"
-                className="inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-pisocoin-ember to-pisocoin-royal px-5 py-4 text-sm font-semibold text-white shadow-[0_18px_40px_rgba(255,91,87,0.22)]"
-              >
-                Send Inquiry
-                <Send className="h-4 w-4" />
-              </button>
-            </form>
+        <div className="reveal mx-auto flex max-w-3xl flex-col items-center text-center">
+          <div className="glass w-full rounded-[2rem] p-10 sm:p-14">
+            <p className="text-xs uppercase tracking-[0.28em] text-pisocoin-amber">Contact us</p>
+            <h3 className="font-display mt-4 text-4xl font-semibold leading-[1] text-white sm:text-5xl">
+              Let&rsquo;s build something<br className="hidden sm:block" /> together.
+            </h3>
+            <p className="mt-5 text-base leading-8 text-white/65 sm:text-lg">
+              Reach out for merchant onboarding, integration help, or platform demos.
+            </p>
+            <a
+              href="https://wkf.ms/49M7r7F"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="shine mt-10 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-pisocoin-ember to-pisocoin-royal px-8 py-4 text-sm font-semibold text-white shadow-[0_18px_40px_rgba(255,91,87,0.22)] transition-transform hover:scale-[1.03]"
+            >
+              Get in Touch
+              <ArrowRight className="h-4 w-4" />
+            </a>
           </div>
         </div>
       </section>
