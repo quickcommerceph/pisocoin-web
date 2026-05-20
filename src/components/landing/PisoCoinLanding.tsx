@@ -1,8 +1,11 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useGSAP } from "@gsap/react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import {
   ArrowLeftRight,
   ArrowRight,
@@ -24,6 +27,11 @@ import {
   WalletCards,
   X,
 } from "lucide-react";
+
+gsap.registerPlugin(useGSAP, ScrollTrigger);
+
+const MINIMUM_LOADER_MS = 1100;
+const HERO_READY_TIMEOUT_MS = 5200;
 
 const NAV_LINKS = [
   { label: "Home", href: "#top" },
@@ -215,7 +223,7 @@ function SectionLabel({
 }) {
   return (
     <div className="mx-auto max-w-3xl text-center">
-      <div className="reveal inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs uppercase tracking-[0.28em] text-pisocoin-amber">
+      <div className="reveal mx-auto inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs uppercase tracking-[0.28em] text-pisocoin-amber">
         <span className="h-px w-7 bg-gradient-to-r from-transparent via-pisocoin-amber to-transparent" />
         {eyebrow}
         <span className="h-px w-7 bg-gradient-to-r from-transparent via-pisocoin-amber to-transparent" />
@@ -244,7 +252,7 @@ function AssetPanel({
   imageClassName?: string;
 }) {
   return (
-    <div className={`reveal relative mx-auto w-full max-w-lg ${className}`}>
+    <div data-gsap-parallax className={`reveal relative mx-auto w-full max-w-lg ${className}`}>
       <div className="absolute -inset-6 rounded-[2rem] bg-gradient-to-br from-pisocoin-ember/18 via-pisocoin-amber/10 to-pisocoin-cyan/10 blur-2xl" />
       <div className="glass relative overflow-hidden rounded-[2rem] p-4 sm:p-6">
         <Image
@@ -260,7 +268,37 @@ function AssetPanel({
   );
 }
 
-function HeroMockup() {
+function InitialPageLoader({ exiting }: { exiting: boolean }) {
+  return (
+    <div
+      className={`page-loader ${exiting ? "page-loader--exit" : ""}`}
+      role="status"
+      aria-live="polite"
+      aria-label="Preparing ₱isoCoin homepage"
+    >
+      <div className="page-loader__mesh" />
+      <div className="page-loader__coin" aria-hidden="true">
+        <span>₱</span>
+      </div>
+      <div className="page-loader__panel">
+        <p className="text-[11px] uppercase tracking-[0.38em] text-pisocoin-amber">Loading remittance desk</p>
+        <div className="font-display mt-4 text-4xl font-semibold tracking-[-0.05em] text-white sm:text-6xl">
+          ₱isoCoin
+        </div>
+        <div className="mt-7 h-1.5 overflow-hidden rounded-full bg-white/10">
+          <span className="page-loader__bar block h-full rounded-full bg-gradient-to-r from-pisocoin-ember via-pisocoin-amber to-pisocoin-cyan" />
+        </div>
+        <div className="mt-5 grid grid-cols-3 gap-2 text-[10px] uppercase tracking-[0.22em] text-white/45">
+          <span>Wallet</span>
+          <span className="text-center">Quote</span>
+          <span className="text-right">Cash-out</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function HeroMockup({ onRatesSettled }: { onRatesSettled?: () => void }) {
   const [amount, setAmount] = useState("1000");
   const [sourceCurrency, setSourceCurrency] = useState<ConverterCurrency>(DEFAULT_SOURCE_CURRENCY);
   const [targetCurrency, setTargetCurrency] = useState<ConverterCurrency>(DEFAULT_TARGET_CURRENCY);
@@ -304,6 +342,7 @@ function HeroMockup() {
       } finally {
         if (!controller.signal.aborted) {
           setLoadingRates(false);
+          onRatesSettled?.();
         }
       }
     }
@@ -313,7 +352,7 @@ function HeroMockup() {
     return () => {
       controller.abort();
     };
-  }, []);
+  }, [onRatesSettled]);
 
   const selectedSourceCurrency =
     CONVERTER_CURRENCIES.find((currency) => currency.code === sourceCurrency) ?? CONVERTER_CURRENCIES[0];
@@ -332,7 +371,7 @@ function HeroMockup() {
   };
 
   return (
-    <div className="relative mx-auto w-full max-w-[500px] reveal reveal-delay-2 lg:ml-auto">
+    <div data-gsap-hero-card className="relative mx-auto w-full max-w-[500px] reveal reveal-delay-2 lg:ml-auto">
       <div className="absolute -inset-8 rounded-[2.75rem] bg-[radial-gradient(circle_at_20%_20%,rgba(255,91,87,0.36),transparent_34%),radial-gradient(circle_at_90%_10%,rgba(240,194,75,0.28),transparent_28%),radial-gradient(circle_at_70%_95%,rgba(102,215,255,0.18),transparent_36%)] blur-2xl" />
 
       <div className="relative overflow-hidden rounded-[2.5rem] border border-white/12 bg-[linear-gradient(145deg,rgba(255,255,255,0.15),rgba(255,255,255,0.05)_34%,rgba(8,13,49,0.92)_100%)] p-4 shadow-[0_34px_120px_rgba(0,0,0,0.5)] backdrop-blur-2xl sm:p-5">
@@ -472,10 +511,273 @@ function HeroMockup() {
 }
 
 export default function PisoCoinLanding() {
+  const landingRef = useRef<HTMLElement | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [clientReady, setClientReady] = useState(false);
+  const [heroLogoReady, setHeroLogoReady] = useState(false);
+  const [heroRatesReady, setHeroRatesReady] = useState(false);
+  const [minimumLoaderElapsed, setMinimumLoaderElapsed] = useState(false);
+  const [pageReady, setPageReady] = useState(false);
+  const [loaderVisible, setLoaderVisible] = useState(true);
+
+  const markHeroLogoReady = useCallback(() => {
+    setHeroLogoReady(true);
+  }, []);
+
+  const markHeroRatesReady = useCallback(() => {
+    setHeroRatesReady(true);
+  }, []);
+
+  useEffect(() => {
+    setClientReady(true);
+
+    const minimumTimer = window.setTimeout(() => {
+      setMinimumLoaderElapsed(true);
+    }, MINIMUM_LOADER_MS);
+
+    const fallbackTimer = window.setTimeout(() => {
+      setHeroLogoReady(true);
+      setHeroRatesReady(true);
+    }, HERO_READY_TIMEOUT_MS);
+
+    return () => {
+      window.clearTimeout(minimumTimer);
+      window.clearTimeout(fallbackTimer);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (pageReady || !clientReady || !heroLogoReady || !heroRatesReady || !minimumLoaderElapsed) {
+      return;
+    }
+
+    setPageReady(true);
+  }, [clientReady, heroLogoReady, heroRatesReady, minimumLoaderElapsed, pageReady]);
+
+  useEffect(() => {
+    document.body.classList.toggle("page-loader-locked", loaderVisible);
+
+    return () => {
+      document.body.classList.remove("page-loader-locked");
+    };
+  }, [loaderVisible]);
+
+  useEffect(() => {
+    if (!pageReady) {
+      return undefined;
+    }
+
+    const timer = window.setTimeout(() => {
+      setLoaderVisible(false);
+    }, 720);
+
+    return () => {
+      window.clearTimeout(timer);
+    };
+  }, [pageReady]);
+
+  useGSAP(
+    () => {
+      const root = landingRef.current;
+
+      if (!root || !pageReady) {
+        return undefined;
+      }
+
+      const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      if (prefersReducedMotion) {
+        root.classList.remove("gsap-enabled");
+        gsap.set(gsap.utils.toArray<HTMLElement>(".reveal", root), {
+          autoAlpha: 1,
+          clearProps: "transform,filter",
+        });
+        return undefined;
+      }
+
+      root.classList.add("gsap-enabled");
+
+      const topLevel = (elements: HTMLElement[]) =>
+        elements.filter((element) => !elements.some((candidate) => candidate !== element && candidate.contains(element)));
+
+      const revealFromVars = {
+        autoAlpha: 0,
+        y: 34,
+        filter: "blur(10px)",
+      };
+
+      const revealToVars = {
+        autoAlpha: 1,
+        y: 0,
+        filter: "blur(0px)",
+        duration: 0.82,
+        ease: "power3.out",
+      };
+
+      const header = root.querySelector<HTMLElement>("header");
+      const hero = root.querySelector<HTMLElement>(".hero-section");
+      const heroItems = topLevel(gsap.utils.toArray<HTMLElement>(".hero-section .reveal", root));
+
+      if (header) {
+        gsap.from(header, {
+          autoAlpha: 0,
+          y: -20,
+          duration: 0.8,
+          ease: "power3.out",
+        });
+      }
+
+      if (heroItems.length) {
+        gsap.set(heroItems, {
+          autoAlpha: 0,
+          y: 42,
+          filter: "blur(12px)",
+        });
+
+        gsap.timeline({ defaults: { ease: "power3.out" } }).to(heroItems, {
+          autoAlpha: 1,
+          y: 0,
+          filter: "blur(0px)",
+          duration: 0.95,
+          stagger: 0.08,
+          delay: 0.08,
+        });
+      }
+
+      if (hero) {
+        const heroMesh = hero.querySelector<HTMLElement>(".hero-mesh");
+        const heroCard = hero.querySelector<HTMLElement>("[data-gsap-hero-card]");
+        const routeLine = hero.querySelector<HTMLElement>(".hero-route-line");
+
+        if (heroMesh) {
+          gsap.to(heroMesh, {
+            yPercent: 12,
+            ease: "none",
+            scrollTrigger: {
+              trigger: hero,
+              start: "top top",
+              end: "bottom top",
+              scrub: true,
+            },
+          });
+        }
+
+        if (heroCard) {
+          gsap.to(heroCard, {
+            yPercent: 8,
+            rotate: -1.5,
+            ease: "none",
+            scrollTrigger: {
+              trigger: hero,
+              start: "top top",
+              end: "bottom top",
+              scrub: true,
+            },
+          });
+        }
+
+        if (routeLine) {
+          gsap.fromTo(
+            routeLine,
+            { xPercent: -120 },
+            {
+              xPercent: 250,
+              ease: "none",
+              scrollTrigger: {
+                trigger: hero,
+                start: "top top",
+                end: "bottom top",
+                scrub: true,
+              },
+            },
+          );
+        }
+      }
+
+      gsap.utils.toArray<HTMLElement>(".section-shell:not(.hero-section)", root).forEach((section) => {
+        const revealItems = topLevel(gsap.utils.toArray<HTMLElement>(".reveal", section));
+        const cards = topLevel(
+          gsap.utils
+            .toArray<HTMLElement>("article, .glass, .glass-soft, form label, form button", section)
+            .filter((item) => !revealItems.includes(item)),
+        );
+
+        if (!revealItems.length && !cards.length) {
+          return;
+        }
+
+        gsap.set(revealItems, revealFromVars);
+        gsap.set(cards, {
+          autoAlpha: 0,
+          y: 30,
+          scale: 0.96,
+          transformOrigin: "50% 80%",
+        });
+
+        const timeline = gsap.timeline({
+          scrollTrigger: {
+            trigger: section,
+            start: "top 76%",
+            once: true,
+          },
+        });
+
+        if (revealItems.length) {
+          timeline.to(revealItems, {
+            ...revealToVars,
+            stagger: 0.08,
+          });
+        }
+
+        if (cards.length) {
+          timeline.to(
+            cards,
+            {
+              autoAlpha: 1,
+              y: 0,
+              scale: 1,
+              duration: 0.72,
+              ease: "power3.out",
+              stagger: 0.045,
+            },
+            revealItems.length ? "-=0.42" : 0,
+          );
+        }
+      });
+
+      gsap.utils.toArray<HTMLElement>("[data-gsap-parallax]", root).forEach((item, index) => {
+        const travel = index % 2 === 0 ? -8 : -5;
+
+        gsap.to(item, {
+          yPercent: travel,
+          rotate: index % 2 === 0 ? -0.8 : 0.8,
+          ease: "none",
+          scrollTrigger: {
+            trigger: item,
+            start: "top bottom",
+            end: "bottom top",
+            scrub: true,
+          },
+        });
+      });
+
+      ScrollTrigger.refresh();
+
+      return () => {
+        root.classList.remove("gsap-enabled");
+      };
+    },
+    { dependencies: [pageReady], revertOnUpdate: true, scope: landingRef },
+  );
 
   return (
-    <main id="top" className="relative overflow-hidden">
+    <main ref={landingRef} id="top" className="relative overflow-hidden" aria-busy={!pageReady}>
+      {loaderVisible ? <InitialPageLoader exiting={pageReady} /> : null}
+
+      <div
+        className={`page-content ${pageReady ? "page-content--ready" : "page-content--preparing"}`}
+        aria-hidden={!pageReady}
+      >
       <header className="fixed inset-x-0 top-0 z-50 border-b border-white/8 bg-[#05081f]/70 backdrop-blur-xl">
         <div className="mx-auto flex max-w-[1360px] items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
           <Link href="#top" className="group inline-flex items-center gap-3">
@@ -485,6 +787,8 @@ export default function PisoCoinLanding() {
               width={56}
               height={56}
               priority
+              onLoad={markHeroLogoReady}
+              onError={markHeroLogoReady}
               className="h-14 w-14 object-contain"
             />
             <div>
@@ -615,7 +919,7 @@ export default function PisoCoinLanding() {
             </div>
           </div>
 
-          <HeroMockup />
+          <HeroMockup onRatesSettled={markHeroRatesReady} />
         </div>
       </section>
 
@@ -629,7 +933,7 @@ export default function PisoCoinLanding() {
             />
           </div>
 
-          <div className="order-1 lg:order-2">
+          <div className="order-1 text-center lg:order-2 lg:text-left">
             <SectionLabel
               eyebrow="What is ₱isoCoin?"
               title="Blockchain-powered remittance built for Filipino families."
@@ -657,7 +961,7 @@ export default function PisoCoinLanding() {
 
       <section className="section-shell px-4 py-24 sm:px-6 lg:px-8 lg:py-28">
         <div className="mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-[1.05fr_0.95fr]">
-          <div>
+          <div className="text-center lg:text-left">
             <SectionLabel
               eyebrow="Remote Payment Solution"
               title="Send money anytime, anywhere."
@@ -1007,6 +1311,7 @@ export default function PisoCoinLanding() {
           <p className="uppercase tracking-[0.22em]">Borderless remittance and gateway design</p>
         </div>
       </footer>
+      </div>
     </main>
   );
 }
