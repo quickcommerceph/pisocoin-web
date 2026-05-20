@@ -118,13 +118,12 @@ const CRYPTO_BASE = [
   "App integration makes crypto payments and payouts feel familiar instead of risky.",
 ];
 
-const FEATURE_LIST = [
-  "Local currency and crypto payments across Asia",
-  "High-risk merchant onboarding for gaming, forex, digital content, and adult verticals",
-  "Crypto payment integration for USDT, Bitcoin, and other major digital assets",
-  "Fraud controls including blacklists, velocity limits, geo-blocking, and 3D Secure options",
-  "Developer-friendly REST APIs, SDKs, and plugin support",
-  "Rapid settlements, transparent pricing, and 24/7 merchant support",
+const GATEWAY_CAPABILITIES = [
+  "Local currency acceptance across major Asian payment rails",
+  "USDT, Bitcoin, and stablecoin settlement for digital commerce",
+  "High-risk merchant onboarding with operational review support",
+  "Fraud controls, routing rules, and merchant configuration tools",
+  "24/7 support for integrations, payouts, and reconciliation",
 ];
 
 const MERCHANT_LOGIN_URL = "https://backoffice.pisocoingateway.com/sessions/signinmerchant";
@@ -807,7 +806,7 @@ export default function PisoCoinLanding() {
             subtitle="From local payment methods to USDT and Bitcoin settlement, ₱isoCoin Gateway is built for merchants that need fast, secure, scalable coverage."
           />
 
-          <div className="reveal reveal-delay-2 mt-10 grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+          <div className="reveal reveal-delay-2 mt-10 grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
             <div className="glass rounded-[2rem] p-7">
               <p className="text-xs uppercase tracking-[0.28em] text-pisocoin-amber">Gateway platform</p>
               <div className="mt-5 space-y-4 text-white/78">
@@ -819,6 +818,14 @@ export default function PisoCoinLanding() {
                   It also supports USDT, Bitcoin, and other major digital assets for
                   e-commerce, gaming, digital services, and high-risk merchant use cases.
                 </p>
+              </div>
+              <div className="mt-8 space-y-3">
+                {GATEWAY_CAPABILITIES.map((item) => (
+                  <div key={item} className="flex items-start gap-3 rounded-2xl bg-white/5 px-4 py-3">
+                    <BadgeCheck className="mt-0.5 h-4 w-4 shrink-0 text-pisocoin-amber" />
+                    <span className="text-sm leading-6 text-white/78">{item}</span>
+                  </div>
+                ))}
               </div>
               <div className="mt-8 flex flex-wrap gap-3">
                 <a href="#contact" className="rounded-full bg-pisocoin-ember px-5 py-3 text-sm font-semibold text-white">
@@ -835,43 +842,6 @@ export default function PisoCoinLanding() {
               </div>
             </div>
 
-            <div className="glass overflow-hidden rounded-[2rem] p-4 sm:p-6">
-              <div className="rounded-[1.5rem] bg-white p-4">
-                <Image
-                  src="/images/features.png"
-                  alt="Supported local payment methods across Asia"
-                  width={835}
-                  height={1620}
-                  sizes="(min-width: 1024px) 36vw, 90vw"
-                  className="mx-auto h-auto max-h-[680px] w-full object-contain"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="section-shell px-4 py-24 sm:px-6 lg:px-8 lg:py-28">
-        <div className="mx-auto max-w-7xl">
-          <SectionLabel
-            eyebrow="Features"
-            title="Gateway features for local currency, crypto, risk, and support."
-          />
-
-          <div className="reveal reveal-delay-2 mt-10 grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
-            <div className="glass rounded-[2rem] p-7">
-              <div className="space-y-4">
-                {FEATURE_LIST.map((item, index) => (
-                  <div key={item} className="flex items-start gap-4 rounded-2xl bg-white/5 px-4 py-4">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-pisocoin-ember to-pisocoin-amber text-xs font-bold text-white">
-                      {String(index + 1).padStart(2, "0")}
-                    </div>
-                    <p className="text-sm leading-7 text-white/78">{item}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
             <div className="glass rounded-[2rem] p-7">
               <div className="flex items-center justify-between">
                 <div>
@@ -881,42 +851,15 @@ export default function PisoCoinLanding() {
                 <TrendingUp className="h-6 w-6 text-pisocoin-amber" />
               </div>
 
-              <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
-                {[
-                  "Alipay",
-                  "WeChat Pay",
-                  "UnionPay",
-                  "FPX",
-                  "DuitNow",
-                  "PromptPay",
-                  "TrueMoney",
-                  "MoMo",
-                  "ZaloPay",
-                  "VietQR",
-                  "GoPay",
-                  "Dana",
-                  "OVO",
-                  "BCA",
-                  "GCash",
-                  "Maya",
-                  "Bank transfer",
-                  "QR PH",
-                  "InstaPay",
-                  "PESONet",
-                  "PayPal",
-                  "USDT",
-                  "Bitcoin",
-                  "Ethereum",
-                  "Stablecoin",
-                  "Fiat settlement",
-                ].slice(0, 18).map((item) => (
-                  <div
-                    key={item}
-                    className="rounded-2xl border border-white/10 bg-[rgba(255,255,255,0.04)] px-4 py-4 text-center text-sm font-medium text-white/80"
-                  >
-                    {item}
-                  </div>
-                ))}
+              <div className="mt-6 overflow-hidden rounded-[1.5rem] bg-white p-4">
+                <Image
+                  src="/images/features.png"
+                  alt="Supported local payment methods across Asia"
+                  width={835}
+                  height={1620}
+                  sizes="(min-width: 1024px) 50vw, 90vw"
+                  className="mx-auto h-auto max-h-[760px] w-full object-contain"
+                />
               </div>
             </div>
           </div>
