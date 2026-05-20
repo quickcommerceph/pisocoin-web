@@ -8,6 +8,7 @@ import {
   ArrowRight,
   BadgeCheck,
   Banknote,
+  BellRing,
   ChevronRight,
   Clock3,
   Coins,
@@ -15,11 +16,10 @@ import {
   Headphones,
   LockKeyhole,
   Menu,
-  QrCode,
   Rocket,
   Send,
   ShieldCheck,
-  Smartphone,
+  Store,
   TrendingUp,
   WalletCards,
   X,
@@ -38,63 +38,78 @@ const BENEFITS = [
   {
     icon: WalletCards,
     title: "Mobile Wallet Access",
-    copy: "Wallet-first onboarding for users who live on GCash, Maya, and other local rails.",
+    copy: "Store, send, and receive ₱isoCoin from a phone-first wallet experience.",
   },
   {
     icon: Banknote,
     title: "Cash-Out Ready",
-    copy: "Turn digital balances into practical cash-out paths for merchants and receivers.",
+    copy: "Recipients can convert ₱isoCoin to PHP through banks, pawnshops, or e-wallets like GCash and Maya.",
+  },
+  {
+    icon: Store,
+    title: "Merchant Payment Ready",
+    copy: "Use ₱isoCoin for shopping, bills, gaming credits, and everyday digital purchases.",
   },
   {
     icon: ShieldCheck,
-    title: "KYC & AML Ready",
-    copy: "Compliance-minded flows for remittance, settlement, and customer verification.",
+    title: "Secure & Transparent",
+    copy: "TRX20-based token rails, end-to-end encryption, and instant ledger updates keep transfers traceable.",
+  },
+  {
+    icon: Coins,
+    title: "Multi-Use Token",
+    copy: "Built for remittances, gaming microtransactions, merchant payments, and digital purchases.",
   },
   {
     icon: Clock3,
-    title: "Fast Transactions",
-    copy: "Built for quick approval, quick funding, and quick movement between rails.",
+    title: "24/7 Accessibility",
+    copy: "Send funds anytime, with no branch visits, cutoff times, or paperwork-heavy steps.",
   },
   {
-    icon: TrendingUp,
-    title: "Lower Friction",
-    copy: "Reduce fees and handoffs with a single product that handles multiple payment paths.",
+    icon: LockKeyhole,
+    title: "KYC & AML Compliant",
+    copy: "Designed with financial regulations in mind for global and local remittance operations.",
   },
   {
-    icon: Headphones,
-    title: "Real Support",
-    copy: "24/7 support for onboarding, ops, and integration questions.",
+    icon: BellRing,
+    title: "Real-Time Notifications",
+    copy: "Track transfers and get support directly from the platform as funds move.",
   },
 ];
 
 const STEPS = [
   {
     step: "01",
-    title: "Login to the dashboard",
-    copy: "Create your account and review your remittance workspace.",
+    title: "Login or download the Piso Wallet",
+    copy: "Install the wallet to securely store and manage ₱isoCoin.",
+    image: "/images/Login-or-Download-the-Piso-Wallet.png",
   },
   {
     step: "02",
-    title: "Apply ₱isoCoin",
-    copy: "Submit your business details and complete the onboarding checklist.",
+    title: "Acquire ₱isoCoin",
+    copy: "Buy ₱isoCoin through supported routes or participate in staking to earn rewards.",
+    image: "/images/Acquire-PisoCoin.png",
   },
   {
     step: "03",
     title: "Start transacting",
-    copy: "Activate rails for wallet transfers, crypto, and local payment flows.",
+    copy: "Send remittances, make payments, or use ₱isoCoin across supported digital services.",
+    image: "/images/Start-Transacting.png",
   },
   {
     step: "04",
-    title: "Grow integrations",
-    copy: "Use the API, merchant tools, and partner support to expand faster.",
+    title: "Gaming integration",
+    copy: "Use ₱isoCoin for in-game purchases, rewards, and digital asset flows.",
+    image: "/images/Gaming-Integration.png",
   },
 ];
 
 const TOKEN_PILLARS = [
-  "Cost efficiency for remittance",
-  "Cash-out readiness for recipients",
-  "Transparency and security",
-  "Financial inclusion at scale",
+  "Cost efficiency through fewer intermediaries and lower processing overhead",
+  "Near-instant cross-border transactions with 24/7 availability",
+  "Transparent, immutable ledger tracking with cryptographic safeguards",
+  "Financial inclusion for users who only need a smartphone to participate",
+  "Stable and reliable value transfers with local-currency conversion paths",
 ];
 
 const CRYPTO_BASE = [
@@ -104,25 +119,12 @@ const CRYPTO_BASE = [
 ];
 
 const FEATURE_LIST = [
-  "Local currency or crypto payments",
-  "Fast merchant onboarding",
-  "Low-fee settlement and payout rails",
-  "Developer-friendly API access",
-  "24/7 support and guidance",
-  "Sandbox-ready integration tools",
-];
-
-const PAYMENT_RAILS = [
-  "GCash",
-  "Maya",
-  "QR PH",
-  "InstaPay",
-  "PESONet",
-  "Bank Transfer",
-  "USDT",
-  "BTC",
-  "ETH",
-  "Stablecoin",
+  "Local currency and crypto payments across Asia",
+  "High-risk merchant onboarding for gaming, forex, digital content, and adult verticals",
+  "Crypto payment integration for USDT, Bitcoin, and other major digital assets",
+  "Fraud controls including blacklists, velocity limits, geo-blocking, and 3D Secure options",
+  "Developer-friendly REST APIs, SDKs, and plugin support",
+  "Rapid settlements, transparent pricing, and 24/7 merchant support",
 ];
 
 const MERCHANT_LOGIN_URL = "https://backoffice.pisocoingateway.com/sessions/signinmerchant";
@@ -215,6 +217,34 @@ function SectionLabel({
           {subtitle}
         </p>
       ) : null}
+    </div>
+  );
+}
+
+function AssetPanel({
+  src,
+  alt,
+  className = "",
+  imageClassName = "",
+}: {
+  src: string;
+  alt: string;
+  className?: string;
+  imageClassName?: string;
+}) {
+  return (
+    <div className={`reveal relative mx-auto w-full max-w-lg ${className}`}>
+      <div className="absolute -inset-6 rounded-[2rem] bg-gradient-to-br from-pisocoin-ember/18 via-pisocoin-amber/10 to-pisocoin-cyan/10 blur-2xl" />
+      <div className="glass relative overflow-hidden rounded-[2rem] p-4 sm:p-6">
+        <Image
+          src={src}
+          alt={alt}
+          width={900}
+          height={900}
+          sizes="(min-width: 1024px) 42vw, 90vw"
+          className={`h-auto w-full object-contain drop-shadow-[0_24px_60px_rgba(0,0,0,0.35)] ${imageClassName}`}
+        />
+      </div>
     </div>
   );
 }
@@ -412,7 +442,7 @@ export default function PisoCoinLanding() {
 
   return (
     <main id="top" className="relative overflow-hidden">
-      <header className="sticky top-0 z-50 border-b border-white/8 bg-[#05081f]/70 backdrop-blur-xl">
+      <header className="fixed inset-x-0 top-0 z-50 border-b border-white/8 bg-[#05081f]/70 backdrop-blur-xl">
         <div className="mx-auto flex max-w-[1360px] items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
           <Link href="#top" className="group inline-flex items-center gap-3">
             <Image
@@ -491,21 +521,15 @@ export default function PisoCoinLanding() {
         </div>
       </header>
 
-      <section className="section-shell px-4 pb-20 pt-14 sm:px-6 lg:px-8 lg:pt-20">
+      <section className="section-shell px-4 pb-20 pt-32 sm:px-6 lg:px-8 lg:pt-36">
         <div className="mx-auto grid max-w-7xl items-center gap-14 lg:grid-cols-[1.05fr_0.95fr]">
           <div>
-            <div className="reveal inline-flex items-center gap-2 rounded-full border border-pisocoin-amber/30 bg-pisocoin-amber/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.28em] text-pisocoin-amber">
-              <span className="h-2 w-2 rounded-full bg-pisocoin-amber pulse-ring" />
-              Borderless wallet for the Philippines
-            </div>
-
             <h1 className="reveal reveal-delay-1 font-display mt-6 text-5xl font-semibold leading-[0.92] tracking-tight text-white sm:text-6xl lg:text-7xl">
-              ₱isoCoin Remit?
+              ₱isoCoin Remit
             </h1>
 
             <p className="reveal reveal-delay-2 mt-6 max-w-2xl text-lg leading-8 text-white/72 sm:text-xl">
-              The cheapest borderless wallet for Filipinos. Send Peso, Crypto, and
-              stable value across borders. Send the app. Fast, free from friction.
+              A blockchain-powered remittance and digital payment platform for faster, lower-cost transfers across supported markets.
             </p>
 
             <div className="reveal reveal-delay-3 mt-8 flex flex-wrap gap-4">
@@ -513,7 +537,7 @@ export default function PisoCoinLanding() {
                 href="#contact"
                 className="shine inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-pisocoin-ember to-pisocoin-royal px-6 py-3.5 text-sm font-semibold text-white shadow-[0_18px_45px_rgba(255,91,87,0.22)]"
               >
-                Start the App
+                Get Started
                 <ArrowRight className="h-4 w-4" />
               </a>
               <a
@@ -527,9 +551,9 @@ export default function PisoCoinLanding() {
 
             <div className="reveal reveal-delay-4 mt-8 grid gap-3 sm:grid-cols-3">
               {[
-                ["Cash-in/out", "Ready in minutes"],
-                ["Token rails", "Remittance built in"],
-                ["24/7", "Human support"],
+                ["TRX20 rails", "Powered by 1PISO"],
+                ["Cash-out", "Banks, wallets, partners"],
+                ["24/7", "No cutoff times"],
               ].map(([label, detail]) => (
                 <div key={label} className="glass-soft rounded-3xl px-4 py-4">
                   <p className="text-xs uppercase tracking-[0.24em] text-white/45">{label}</p>
@@ -546,56 +570,32 @@ export default function PisoCoinLanding() {
       <section id="services" className="section-shell px-4 py-24 sm:px-6 lg:px-8 lg:py-28">
         <div className="mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-[0.95fr_1.05fr]">
           <div className="reveal order-2 lg:order-1">
-            <div className="relative mx-auto max-w-md rounded-[2rem] border border-white/10 bg-[rgba(255,255,255,0.04)] p-5 shadow-[0_28px_90px_rgba(0,0,0,0.35)]">
-              <div className="absolute -left-6 top-8 h-20 w-20 rounded-full bg-pisocoin-cyan/15 blur-2xl" />
-              <div className="relative overflow-hidden rounded-[1.75rem] border border-white/10 bg-gradient-to-b from-[#15206a] to-[#091043] p-5">
-                <div className="flex items-center justify-between text-white/60">
-                  <span className="text-[11px] uppercase tracking-[0.28em]">What is ₱isoCoin?</span>
-                  <QrCode className="h-5 w-5 text-pisocoin-amber" />
-                </div>
-                <div className="mt-6 rounded-[1.6rem] border border-white/10 bg-white/6 p-5">
-                  <div className="flex items-end justify-between">
-                    <div>
-                      <p className="text-sm text-white/55">Digital remittance</p>
-                      <p className="mt-1 text-3xl font-display font-semibold text-white">₱isoCoin</p>
-                    </div>
-                    <div className="rounded-2xl bg-pisocoin-amber px-3 py-2 text-xs font-semibold text-pisocoin-ink">LIVE</div>
-                  </div>
-                  <div className="mt-5 grid gap-3 text-sm text-white/75">
-                    <div className="flex items-center gap-3 rounded-2xl bg-black/15 px-4 py-3">
-                      <Globe className="h-4 w-4 text-pisocoin-cyan" />
-                      Global payment gateway with local payout rails
-                    </div>
-                    <div className="flex items-center gap-3 rounded-2xl bg-black/15 px-4 py-3">
-                      <LockKeyhole className="h-4 w-4 text-pisocoin-amber" />
-                      Safe and compliant flows for merchants and senders
-                    </div>
-                  </div>
-                </div>
-                <div className="absolute -bottom-10 -right-10 h-32 w-32 rounded-full bg-pisocoin-ember/25 blur-3xl" />
-              </div>
-            </div>
+            <AssetPanel
+              src="/images/What-is-PisoCoin-1.png"
+              alt="₱isoCoin token illustration"
+              imageClassName="max-h-[560px]"
+            />
           </div>
 
           <div className="order-1 lg:order-2">
             <SectionLabel
               eyebrow="What is ₱isoCoin?"
-              title="A remote payment solution for modern remittance."
-              subtitle="₱isoCoin brings crypto-aware payments, local wallet support, and merchant-friendly tools into one borderless flow."
+              title="Blockchain-powered remittance built for Filipino families."
+              subtitle="₱isoCoin Remit uses the TRX20-based 1PISO token to support real-time cross-border transfers, lower fees, mobile convenience, and flexible cash-out options."
             />
             <div className="reveal reveal-delay-2 mt-8 grid gap-4 sm:grid-cols-2">
               <div className="glass rounded-[1.75rem] p-6">
-                <p className="text-xs uppercase tracking-[0.24em] text-pisocoin-amber">Digital rails</p>
+                <p className="text-xs uppercase tracking-[0.24em] text-pisocoin-amber">Canada to PH</p>
                 <p className="mt-3 text-lg leading-7 text-white/78">
-                  A digital remittance platform built to move value through wallets, bank
-                  transfers, and token-enabled routes.
+                  Send money from Canada to the Philippines through a wallet-led flow built
+                  for speed and accessibility.
                 </p>
               </div>
               <div className="glass rounded-[1.75rem] p-6">
-                <p className="text-xs uppercase tracking-[0.24em] text-pisocoin-amber">Merchant ready</p>
+                <p className="text-xs uppercase tracking-[0.24em] text-pisocoin-amber">Cash-out ready</p>
                 <p className="mt-3 text-lg leading-7 text-white/78">
-                  Designed for fast onboarding, simple settlement, and easy integration into
-                  business workflows.
+                  Recipients can receive funds in digital wallets or withdraw cash through
+                  payout partners across the Philippines.
                 </p>
               </div>
             </div>
@@ -608,15 +608,15 @@ export default function PisoCoinLanding() {
           <div>
             <SectionLabel
               eyebrow="Remote Payment Solution"
-              title="Send, receive, and settle without the usual friction."
-              subtitle="₱isoCoin supports remote payment flows that feel fast on the surface and dependable underneath."
+              title="Send money anytime, anywhere."
+              subtitle="No bank visits and no paperwork. ₱isoCoin Remit supports real-time crypto transfers through secure mobile and web access."
             />
             <div className="reveal reveal-delay-2 mt-8 flex flex-wrap gap-3">
               {[
-                "Crypto to cash-out",
-                "Wallet transfers",
-                "Merchant payouts",
-                "Borderless settlement",
+                "Remote transfers",
+                "Digital wallet receipt",
+                "Cash withdrawal paths",
+                "Partner payout network",
               ].map((item) => (
                 <span
                   key={item}
@@ -636,44 +636,11 @@ export default function PisoCoinLanding() {
           </div>
 
           <div className="reveal">
-            <div className="glass relative mx-auto max-w-lg overflow-hidden rounded-[2rem] p-6">
-              <div className="absolute right-0 top-0 h-32 w-32 rounded-full bg-pisocoin-cyan/10 blur-2xl" />
-              <div className="grid gap-5 lg:grid-cols-[0.88fr_1.12fr]">
-                <div className="rounded-[1.75rem] border border-white/10 bg-gradient-to-b from-[#121a68] to-[#08103b] p-4">
-                  <div className="mb-4 flex items-center justify-between text-xs uppercase tracking-[0.24em] text-white/45">
-                    <span>Wallet app</span>
-                    <Smartphone className="h-4 w-4 text-pisocoin-amber" />
-                  </div>
-                  <div className="mx-auto flex h-[280px] w-full max-w-[180px] items-center justify-center rounded-[2rem] border border-white/10 bg-[#f3f0ff] shadow-[0_22px_45px_rgba(0,0,0,0.25)]">
-                    <div className="w-[82%] rounded-[1.4rem] bg-white p-4 text-pisocoin-ink shadow-[0_18px_30px_rgba(0,0,0,0.08)]">
-                      <div className="h-2 w-10 rounded-full bg-pisocoin-royal/20" />
-                      <div className="mt-4 rounded-2xl bg-pisocoin-ink px-3 py-3 text-white">
-                        <p className="text-[10px] uppercase tracking-[0.2em] text-white/50">Fast transfer</p>
-                        <p className="mt-2 text-2xl font-semibold">Send now</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="rounded-[1.75rem] border border-white/10 bg-white/6 p-5">
-                  <p className="text-xs uppercase tracking-[0.24em] text-pisocoin-amber">Ready to send</p>
-                  <h3 className="font-display mt-3 text-3xl font-semibold text-white">Easy mobile payment flow</h3>
-                  <p className="mt-4 text-sm leading-7 text-white/70">
-                    Perfect for users who want a simple, modern way to move value through
-                    local and international payment rails.
-                  </p>
-                  <div className="mt-6 space-y-3">
-                    {["Choose destination", "Pick payout rail", "Confirm transfer"].map((line, index) => (
-                      <div key={line} className="flex items-center gap-3 rounded-2xl bg-black/15 px-4 py-3">
-                        <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-pisocoin-ember to-pisocoin-amber text-xs font-bold text-white">
-                          {index + 1}
-                        </span>
-                        <span className="text-sm text-white/80">{line}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
+            <AssetPanel
+              src="/images/remote-payment-solution.png"
+              alt="Secure remote payment on a mobile phone"
+              imageClassName="max-h-[620px]"
+            />
           </div>
         </div>
       </section>
@@ -682,11 +649,11 @@ export default function PisoCoinLanding() {
         <div className="mx-auto max-w-7xl">
           <SectionLabel
             eyebrow="Why ₱isoCoin?"
-            title="Made for remittance behavior, not generic fintech theater."
-            subtitle="The product is positioned around the realities of Filipino payments: cash-out, trust, support, and speed."
+            title="Made for remittance, cash-out, and everyday digital value."
+            subtitle="The product is positioned around the realities of Filipino payments: mobile access, cash-out, trusted support, and fast movement across borders."
           />
 
-          <div className="reveal reveal-delay-2 mt-10 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+          <div className="reveal reveal-delay-2 mt-10 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
             {BENEFITS.map((item) => {
               const Icon = item.icon;
               return (
@@ -707,12 +674,21 @@ export default function PisoCoinLanding() {
         <div className="mx-auto max-w-7xl">
           <SectionLabel
             eyebrow="How to Get Started"
-            title="Four steps from interest to live transacting."
+            title="Four steps from wallet login to live transacting."
           />
 
           <div className="reveal reveal-delay-2 mt-10 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
             {STEPS.map((item) => (
-              <article key={item.step} className="glass rounded-[1.75rem] p-6">
+              <article key={item.step} className="glass overflow-hidden rounded-[1.75rem] p-5">
+                <div className="relative mb-5 aspect-square overflow-hidden rounded-[1.35rem] bg-white/5">
+                  <Image
+                    src={item.image}
+                    alt=""
+                    fill
+                    sizes="(min-width: 1280px) 25vw, (min-width: 768px) 50vw, 90vw"
+                    className="object-contain p-2"
+                  />
+                </div>
                 <div className="flex items-center justify-between">
                   <div className="font-display text-3xl font-semibold text-pisocoin-amber">{item.step}</div>
                   <Rocket className="h-5 w-5 text-white/35" />
@@ -727,34 +703,30 @@ export default function PisoCoinLanding() {
 
       <section className="section-shell px-4 py-24 sm:px-6 lg:px-8 lg:py-28">
         <div className="mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-[0.95fr_1.05fr]">
-          <div className="reveal">
-            <div className="glass relative overflow-hidden rounded-[2rem] p-7">
-              <div className="absolute -right-14 top-10 h-40 w-40 rounded-full bg-pisocoin-amber/12 blur-3xl" />
-              <div className="flex items-center gap-4">
-                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-pisocoin-ember to-pisocoin-royal">
-                  <ShieldCheck className="h-8 w-8 text-white" />
+          <div>
+            <SectionLabel
+              eyebrow="Importance of Tokens"
+              title="Tokens make remittance faster, clearer, and more accessible."
+              subtitle="Token-based transfers can reduce intermediary costs, keep records transparent, and expand access for unbanked recipients who rely on smartphones."
+            />
+            <div className="reveal reveal-delay-2 mt-8 space-y-3">
+              {TOKEN_PILLARS.map((item) => (
+                <div key={item} className="flex items-center gap-3 rounded-2xl bg-white/5 px-4 py-3">
+                  <BadgeCheck className="h-4 w-4 text-pisocoin-amber" />
+                  <span className="text-sm text-white/80">{item}</span>
                 </div>
-                <div>
-                  <p className="text-xs uppercase tracking-[0.24em] text-pisocoin-amber">Tokens in remittance</p>
-                  <h3 className="font-display mt-2 text-3xl font-semibold text-white">Why token rails matter</h3>
-                </div>
-              </div>
-              <div className="mt-8 space-y-3">
-                {TOKEN_PILLARS.map((item) => (
-                  <div key={item} className="flex items-center gap-3 rounded-2xl bg-white/5 px-4 py-3">
-                    <BadgeCheck className="h-4 w-4 text-pisocoin-amber" />
-                    <span className="text-sm text-white/80">{item}</span>
-                  </div>
-                ))}
-              </div>
+              ))}
             </div>
           </div>
 
           <div>
-            <SectionLabel
-              eyebrow="Importance of Tokens"
-              title="Tokens make remittance feel faster, clearer, and more accessible."
-              subtitle="Use token-based flows to reduce operational friction while keeping the experience transparent for end users."
+            <Image
+              src="/images/crypto-savvy-customer-base.png"
+              alt="₱isoCoin secure value storage illustration"
+              width={760}
+              height={760}
+              sizes="(min-width: 1024px) 38vw, 90vw"
+              className="h-auto w-full rounded-[1.5rem] object-contain"
             />
           </div>
         </div>
@@ -764,9 +736,9 @@ export default function PisoCoinLanding() {
         <div className="mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-[1.05fr_0.95fr]">
           <div>
             <SectionLabel
-              eyebrow="Crypto-Savvy Customer Base"
-              title="Built for users who already think in wallets, rates, and transfers."
-              subtitle="₱isoCoin can speak to a customer base that is open to digital value movement, incentives, and app-based integrations."
+              eyebrow="Gaming + Rewards"
+              title="A multi-use token for play, payments, and loyalty."
+              subtitle="₱isoCoin can support in-game purchases, digital assets, merchant rewards, and customer incentives without forcing users out of familiar wallet flows."
             />
             <div className="reveal reveal-delay-2 mt-8 space-y-4">
               {CRYPTO_BASE.map((item) => (
@@ -778,27 +750,11 @@ export default function PisoCoinLanding() {
           </div>
 
           <div className="reveal">
-            <div className="relative mx-auto max-w-md rounded-[2rem] border border-white/10 bg-[rgba(255,255,255,0.04)] p-5">
-              <div className="absolute -left-8 top-8 h-28 w-28 rounded-full bg-pisocoin-cyan/15 blur-2xl" />
-              <div className="relative overflow-hidden rounded-[1.75rem] bg-gradient-to-b from-[#15308a] via-[#0b165e] to-[#070d34] p-5">
-                <div className="flex items-center justify-between text-white/55">
-                  <span className="text-[11px] uppercase tracking-[0.24em]">Customer base</span>
-                  <Coins className="h-5 w-5 text-pisocoin-amber" />
-                </div>
-                <div className="mt-6 grid gap-4 rounded-[1.4rem] bg-white/6 p-5">
-                  {[
-                    ["Fast onboarding", "A familiar wallet-style experience"],
-                    ["Loyalty hooks", "Rewards and incentives in the flow"],
-                    ["App integration", "Ready for a product ecosystem"],
-                  ].map(([title, copy]) => (
-                    <div key={title} className="rounded-2xl bg-black/15 px-4 py-3">
-                      <p className="font-medium text-white">{title}</p>
-                      <p className="mt-1 text-sm text-white/60">{copy}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
+            <AssetPanel
+              src="/images/Gaming-Integration.png"
+              alt="₱isoCoin gaming integration illustration"
+              imageClassName="max-h-[580px]"
+            />
           </div>
         </div>
       </section>
@@ -829,18 +785,14 @@ export default function PisoCoinLanding() {
               </div>
 
               <div className="reveal">
-                <div className="relative mx-auto flex max-w-md items-center justify-center">
-                  <div className="absolute h-64 w-64 rounded-full bg-pisocoin-amber/10 blur-3xl" />
-                  <div className="relative flex h-56 w-56 items-center justify-center rounded-full border border-white/10 bg-white/6 shadow-[0_25px_70px_rgba(0,0,0,0.3)]">
-                    <div className="absolute inset-6 rounded-full border border-pisocoin-amber/30" />
-                    <div className="absolute inset-10 rounded-full bg-gradient-to-br from-pisocoin-ember via-pisocoin-amber to-pisocoin-royal opacity-90" />
-                    <div className="relative rounded-full bg-[#081043] px-5 py-6 text-center shadow-[0_10px_30px_rgba(0,0,0,0.2)]">
-                      <div className="text-xs uppercase tracking-[0.3em] text-pisocoin-amber">₱isoCoin</div>
-                      <div className="mt-2 font-display text-4xl font-semibold text-white">1</div>
-                      <div className="mt-1 text-sm text-white/65">Coin Revolution</div>
-                    </div>
-                  </div>
-                </div>
+                <Image
+                  src="/images/pisocoin-revolution.png"
+                  alt="Stack of ₱isoCoin tokens"
+                  width={768}
+                  height={768}
+                  sizes="(min-width: 1024px) 38vw, 90vw"
+                  className="mx-auto h-auto max-h-[420px] w-full object-contain drop-shadow-[0_28px_70px_rgba(0,0,0,0.35)]"
+                />
               </div>
             </div>
           </div>
@@ -851,44 +803,48 @@ export default function PisoCoinLanding() {
         <div className="mx-auto max-w-7xl">
           <SectionLabel
             eyebrow="Global Payment Gateway"
-            title="Local wallets, crypto payments, and merchant tooling in one path."
-            subtitle="A payment gateway that can serve Asia-facing flows without losing the simplicity merchants expect."
+            title="Accept local and crypto payments across Asia and beyond."
+            subtitle="From local payment methods to USDT and Bitcoin settlement, ₱isoCoin Gateway is built for merchants that need fast, secure, scalable coverage."
           />
 
           <div className="reveal reveal-delay-2 mt-10 grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
             <div className="glass rounded-[2rem] p-7">
-              <p className="text-xs uppercase tracking-[0.28em] text-pisocoin-amber">Gateway logic</p>
+              <p className="text-xs uppercase tracking-[0.28em] text-pisocoin-amber">Gateway platform</p>
               <div className="mt-5 space-y-4 text-white/78">
                 <p>
-                  ₱isoCoin is a payment gateway designed for users and merchants who need
-                  both local and cross-border movement without a clunky experience.
+                  ₱isoCoin Gateway connects businesses to trusted local payment methods
+                  in China, Malaysia, Thailand, Vietnam, Indonesia, and the Philippines.
                 </p>
                 <p>
-                  The architecture can support wallets, bank rails, tokens, and merchant
-                  settlement paths with a clear dashboard and strong support layer.
+                  It also supports USDT, Bitcoin, and other major digital assets for
+                  e-commerce, gaming, digital services, and high-risk merchant use cases.
                 </p>
               </div>
               <div className="mt-8 flex flex-wrap gap-3">
                 <a href="#contact" className="rounded-full bg-pisocoin-ember px-5 py-3 text-sm font-semibold text-white">
-                  Contact Us
+                  Contact Sales
                 </a>
-                <a href="#top" className="rounded-full border border-white/12 bg-white/5 px-5 py-3 text-sm font-semibold text-white/85">
+                <a
+                  href="https://apidoc.pisocoingateway.com/"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="rounded-full border border-white/12 bg-white/5 px-5 py-3 text-sm font-semibold text-white/85"
+                >
                   API
                 </a>
               </div>
             </div>
 
-            <div className="glass rounded-[2rem] p-7">
-              <p className="text-xs uppercase tracking-[0.28em] text-pisocoin-amber">Feature matrix</p>
-              <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3">
-                {PAYMENT_RAILS.map((rail) => (
-                  <div
-                    key={rail}
-                    className="flex items-center justify-center rounded-2xl border border-white/10 bg-white/6 px-3 py-4 text-center text-sm font-medium text-white/80"
-                  >
-                    {rail}
-                  </div>
-                ))}
+            <div className="glass overflow-hidden rounded-[2rem] p-4 sm:p-6">
+              <div className="rounded-[1.5rem] bg-white p-4">
+                <Image
+                  src="/images/features.png"
+                  alt="Supported local payment methods across Asia"
+                  width={835}
+                  height={1620}
+                  sizes="(min-width: 1024px) 36vw, 90vw"
+                  className="mx-auto h-auto max-h-[680px] w-full object-contain"
+                />
               </div>
             </div>
           </div>
@@ -899,7 +855,7 @@ export default function PisoCoinLanding() {
         <div className="mx-auto max-w-7xl">
           <SectionLabel
             eyebrow="Features"
-            title="Everything the landing page promises should feel concrete."
+            title="Gateway features for local currency, crypto, risk, and support."
           />
 
           <div className="reveal reveal-delay-2 mt-10 grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
@@ -927,6 +883,20 @@ export default function PisoCoinLanding() {
 
               <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
                 {[
+                  "Alipay",
+                  "WeChat Pay",
+                  "UnionPay",
+                  "FPX",
+                  "DuitNow",
+                  "PromptPay",
+                  "TrueMoney",
+                  "MoMo",
+                  "ZaloPay",
+                  "VietQR",
+                  "GoPay",
+                  "Dana",
+                  "OVO",
+                  "BCA",
                   "GCash",
                   "Maya",
                   "Bank transfer",
@@ -939,7 +909,7 @@ export default function PisoCoinLanding() {
                   "Ethereum",
                   "Stablecoin",
                   "Fiat settlement",
-                ].map((item) => (
+                ].slice(0, 18).map((item) => (
                   <div
                     key={item}
                     className="rounded-2xl border border-white/10 bg-[rgba(255,255,255,0.04)] px-4 py-4 text-center text-sm font-medium text-white/80"
